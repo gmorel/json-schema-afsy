@@ -1,0 +1,4 @@
+services:
+#    gmorel_github.example:
+#        class: Gmorel\Bundle\GithubBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
