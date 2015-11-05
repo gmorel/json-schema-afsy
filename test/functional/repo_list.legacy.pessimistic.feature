@@ -8,7 +8,7 @@ Feature: should be equal to Display sorted GitHub organization repository list
         Given I'm not authenticated
 
 
-    Scenario: should be equal to Sort by full_name
+    Scenario: should be able to sort by full_name
         When I send a GET request to "/users/rezzza/repos?sort=full_name"
         Then the response status code should be 200
         And the response should be in JSON
@@ -263,7 +263,7 @@ Feature: should be equal to Display sorted GitHub organization repository list
         And the JSON node "[2]->default_branch" should be equal to "master"
 
 
-Scenario: should be equal to Sort by created
+Scenario: should be able to Sort by created
         When I send a GET request to "/users/rezzza/repos?sort=created"
         Then the response status code should be 200
         And the response should be in JSON
@@ -520,7 +520,7 @@ Scenario: should be equal to Sort by created
         And the JSON node "[2]->default_branch" should be equal to "master"
 
 
-    Scenario: should be equal to Sort by updated
+    Scenario: should be able to Sort by updated
         When I send a GET request to "/users/rezzza/repos?sort=updated"
         Then the response status code should be 200
         And the response should be in JSON
@@ -540,7 +540,7 @@ Scenario: should be equal to Sort by created
         ### You get the idea ..
 
 
-    Scenario: should be equal to Sort by full_name (default)
+    Scenario: should be able to sort by full_name (default)
         When I send a GET request to "/users/rezzza/repos"
         Then the response status code should be 200
         And the response should be in JSON
