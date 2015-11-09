@@ -1,0 +1,50 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "identifier": {
+            "description": "Entity identifier",
+            "type": "integer",
+            "minimum": 0
+        },
+        "url": {
+            "description": "URL Scheme",
+            "type": "string",
+            "pattern": "^https:\\\/\\\/(.*)$"
+        },
+        "github_internal_url_repos": {
+            "description": "GitHub internal URL: https://api.github.com/repos/rezzza",
+            "type": "string",
+            "pattern": "^https:\\\/\\\/api\\.github\\.com\\\/repos\\\/rezzza(.*)$"
+        },
+        "github_internal_url_users": {
+            "description": "GitHub internal URL: https://api.github.com/users/rezzza",
+            "type": "string",
+            "pattern": "^https:\\\/\\\/api\\.github\\.com\\\/users\\\/rezzza(.*)$"
+        },
+        "github_git_url": {
+            "description": "GitHub internal Git URL: git://github.com/rezzza/JobflowBundle.git",
+            "type": "string",
+            "pattern": "^git:\\\/\\\/github\\.com\\\/(.*)\\.git"
+        },
+        "github_ssh_url": {
+            "description": "GitHub internal Git URL: git@github.com:rezzza/JobflowBundle.git",
+            "type": "string",
+            "pattern": "^git\\@github\\.com\\:(.*)\\.git$"
+        },
+        "positive_integer": {
+            "description": "Positive integer",
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": false
+        },
+        "date_y_m_d___h_i_s": {
+            "description": "Y-m-dTH:i:sZ (ISO 8601)",
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T(\\d{2}):(\\d{2}):(\\d{2})Z$"
+        },
+        "string_not_empty": {
+            "type": "string",
+            "minlength": 1
+        }
+    }
+}
