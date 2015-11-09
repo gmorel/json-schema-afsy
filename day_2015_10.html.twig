@@ -1,0 +1,414 @@
+{% extends 'AfsyFrontBundle:Avent:day.html.twig' %}
+
+{% set year = 2015 %}
+
+{% block article_title "Jour 9 - Et si on rendait les tests Behat de nos API Symfony REST un peu plus lisible avec JSON Schema ?" %}
+
+{% block article_content %}
+<h1>Et si on rendait les tests Behat de nos API Symfony REST un peu plus lisible avec JSON Schema ?</h1>
+
+<h2>Sommaire</h2>
+
+<ul>
+    <li><a href="#preambule">Avez-vous confiance en vos APIs REST ?</a></li>
+    <li><a href="#cas-simple">Une opération simple: api.github.com/users/</a></li>
+    <li><a href="#tester-son-api-json">Tester son API REST JSON</a></li>
+    <li>
+        <a href="#cas-complex">Et avec une opération un peu plus complexes ?</a>
+        <ul>
+            <li><a href="#version-optimiste">La version optimiste</a></li>
+            <li><a href="#version-pessimiste">La version pessimiste</a></li>
+        </ul>
+    </li>
+    <li><a href="#probleme">Problème</a></li>
+    <li><a href="#plus-court">Et si on pouvait faire des tests fonctionnels plus court ?</a></li>
+    <li>
+        <a href="#rescousse">JSON Schema à la rescousse ?</a>
+        <ul>
+            <li><a href="#presentation">Présentation JSON Schema</a></li>
+            <li><a href="#exemples">Exemples concrets</a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#symfony2">L'intégrer dans son projet Symfony 2</a>
+        <ul>
+            <li><a href="#aide">Aide à l'écriture d'un JSON Schema</a></li>
+            <li><a href="#avantages">Avantages</a></li>
+            <li><a href="#inconvenients">Inconvénients</a></li>
+        </ul>
+    </li>
+
+    <li><a href="#plus">En savoir plus</a></li>
+
+</ul>
+
+
+<h2 id="preambule">Avez-vous confiance en vos APIs REST ?</h2>
+
+<p>
+    Avec l'emmergence des micro services et des client mobiles, les APIs REST ont le vent en poupe.
+    Et avec la démocratisation des client Web JS, ce n'est que le début.
+</p>
+
+<p>
+    Les clients doivent pouvoir faire confiance à leurs APIs. La qualité logicielle doit donc avant tout se faire de ce côté là.
+</p>
+
+<p>
+    Mais comment faire pour garder son API bien testée, sans pour autant faire dans l'exhaustif ?
+    Et se retrouver avec des tests fonctionnels immaintenable ?
+</p>
+
+<h2 id="cas-simple">Une opération simple: api.github.com/users/</h2>
+
+<p>
+    On veut tester l'opération de l'API suivante.
+    Et être sûr qu'on reçoit une `200 OK` avec le content type `application/json` ainsi que le payload attendu.
+</p>
+
+<i>
+    <a href="https://github.com/jkbrzt/httpie">http</a> https://api.github.com/users/afsy
+</i>
+
+<pre><code class="language-json">
+{
+    "avatar_url": "https://avatars.githubusercontent.com/u/134074?v=3",
+    "bio": null,
+    "blog": "http://www.afsy.fr/",
+    "company": null,
+    "created_at": "2009-10-02T08:28:42Z",
+    "email": null,
+    "events_url": "https://api.github.com/users/afsy/events{/privacy}",
+    "followers": 0,
+    "followers_url": "https://api.github.com/users/afsy/followers",
+    "following": 0,
+    "following_url": "https://api.github.com/users/afsy/following{/other_user}",
+    "gists_url": "https://api.github.com/users/afsy/gists{/gist_id}",
+    "gravatar_id": "",
+    "hireable": null,
+    "html_url": "https://github.com/afsy",
+    "id": 134074,
+    "location": "France",
+    "login": "afsy",
+    "name": "Association Francophone des Utilisateurs de Symfony",
+    "organizations_url": "https://api.github.com/users/afsy/orgs",
+    "public_gists": 0,
+    "public_repos": 3,
+    "received_events_url": "https://api.github.com/users/afsy/received_events",
+    "repos_url": "https://api.github.com/users/afsy/repos",
+    "site_admin": false,
+    "starred_url": "https://api.github.com/users/afsy/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/afsy/subscriptions",
+    "type": "Organization",
+    "updated_at": "2015-04-10T18:21:56Z",
+    "url": "https://api.github.com/users/afsy"
+}
+</code></pre>
+
+<p>
+    On pourrait tester fonctionnellement l'opération via <a href="http://docs.behat.org">Behat</a> et sa syntaxe <a href="https://github.com/cucumber/cucumber/wiki/Gherkin">Gherkin</a> avec quelque chose comme ça :
+</p>
+
+<pre><code class="language-gherkin">
+    Scenario: I get a GitHub user
+        Given I'm not authenticated
+        When I send a GET request to "https://api.github.com/users/afsy"
+        Then the response status code should be 200
+        And the response should be in JSON
+        And the JSON node "login" should be equal to "afsy"
+        And ...
+        And the JSON node "location" should be equal to "France"
+</code></pre>
+
+<h2 id="tester-son-api-json">Tester son API REST JSON</h2>
+
+<h3>Objectif principal: tester les éléments spécifiques au scénario de la feature</h3>
+
+<pre><code class="language-json">
+    "login": afsy,
+</code></pre>
+
+<p>Le noeud doit être égale à la valeur attendue.</p>
+
+<pre><code class="language-gherkin">
+And the JSON node "login" should be equal to "afsy"
+</code></pre>
+
+Jusque là, tout va bien.
+
+<h2 id="cas-complex">Et avec une opération un peu plus complexes ?</h2>
+
+<p>Et si on voulait tester son API (un clone de l'API de GitHub qui liste les repository d'un utilisateur) :</p>
+
+<i>
+    <a href="https://github.com/jkbrzt/httpie">http</a> https://api.github.com/users/rezzza/repos\?visibility=public
+<i/>
+
+
+<p>
+    Sauf que l'on veut tester la feature `sort` qui peut trier la liste des repository par `created`, `updated`, `pushed` et `full_name`.
+    Soit 4 types de tri.
+</p>
+
+<p>En conséquence, on aurait en Behat :</p>
+<ul>
+    <li>1 Feature : `List all organization repositories from different filter`</li>
+    <li>5 Scenaris : `Sort by created`, `Sort by updated`, `Sort by pushed`, `Sort by full_name` et `Sort by default`</li>
+</ul>
+
+<p>Via Behat, on pourrait avoir quelque chose comme cela :</p>
+
+<h3 id="version-optimiste">La version optimiste</h3>
+
+<img alt="La version optimiste" title="La version optimiste" src="https://raw.githubusercontent.com/gmorel/json-schema-afsy/develop/optimistic.png"/>
+<a href="https://github.com/gmorel/json-schema-afsy/blob/develop/test/functional/repo_list.legacy.optimistic.feature">source</a>
+
+<h3 id="version-pessimiste">La version pessimiste</h3>
+
+<img alt="La version pessimiste" title="La version pessimiste" src="https://raw.githubusercontent.com/gmorel/json-schema-afsy/develop/pesimistic.png"/>
+<a href="https://github.com/gmorel/json-schema-afsy/blob/develop/test/functional/repo_list.legacy.pessimistic.feature">source</a>
+
+<p>Normalement aucun d'entre vous ne vient de lire les scénaris de la version pessimiste.</p>
+<p>
+    <b>Et c'est normal !</b>
+</p>
+
+<h2 id="probleme">Problème</h2>
+
+<p>
+    On se retrouve vite avec des <b>assertions dupliquées</b> dans tous les scénaris d'une feature.
+    Par peur de potentielles régressions fonctionnelles, on fait dans l'exhaustivité.
+</p>
+
+<p>
+    Pourtant, <b>un test trop exhaustif devient rapidement illisible</b>.
+    La <a href="https://fr.wikipedia.org/wiki/Charge_cognitive">charge cognitive<a/> devenant trop importante.
+    Elle amène n'importe quel développeur à passer à côté (volontairement <b>ou non</b>) de l'essence même du test.
+    Rendant le test à terme difficile à maintenir. Surtout si plusiers développeurs passent dessus.
+    Après plusieurs années, on commence même à devoir faire des refactor de test.
+    Afin de les rendre plus lisibles..
+    Les tests font désormais parti de la dette technique du projet.
+</p>
+
+<p>
+    On se retrouve donc avec des Features, contenant plusieurs scénaris testant la même chose.
+    Pour la plupart copier-coller.
+    Alors que chaque scénario ne devrait chercher qu'à tester de manière explicite qu'une petite partie du payload.
+</p>
+
+<p>Plusieurs questions se posent alors:</p>
+<ul>
+    <li>Est-ce pertinent de tout tester de manière exhaustive (<a href="https://github.com/gmorel/json-schema-afsy/blob/develop/test/functional/repo_list.legacy.pessimistic.feature">version pessimiste</a>) ?</li>
+    <li>Même si le code n'est pas testé unitairement dérrière ?</li>
+    <li>Inversement, est-ce suffisant de ne tester que les éléments qui permettent de déterminer si le scénario est implémenté (ici le nom du repo); Si on dispose déjà de tests unitaires poussés ?</li>
+    <li>Quid des tests anti-regressions entre les différents tris (<a href="https://github.com/gmorel/json-schema-afsy/blob/develop/test/functional/repo_list.legacy.optimistic.feature">version optimiste</a> ?</li>
+    <li>Est-ce productif/maintenable de faire tous ces copier-collers entre les différents scénaris ?</li>
+</ul>
+
+<h2 id="plus-court">Et si on pouvait faire des tests fonctionnels plus court ?</h2>
+
+<p>
+    De manière à pouvoir diminuer leur <a href="https://fr.wikipedia.org/wiki/Charge_cognitive">charge cognitive</a>.
+    Et ainsi mettre en avant la "substantifique moelle" de l'élément métier du scénario que l'on cherche à tester.
+    Et ça, tout en gardant notre capacité à <b>détecter les regressions fonctionnelles<b/> ?
+</p>
+
+<p>Et si on pouvait remplacer la version pessimiste</p>
+<img alt="La version pessimiste" title="La version pessimiste" src="https://raw.githubusercontent.com/gmorel/json-schema-afsy/develop/pesimistic.png"/>
+<a href="https://github.com/gmorel/json-schema-afsy/blob/develop/test/functional/repo_list.legacy.pessimistic.feature">
+    985 lignes.
+</a>
+
+<p>par ça :</p>
+
+<pre><code class="language-gherkin">
+Scenario: should be able to sort by full_name
+    When I send a GET request to "/users/rezzza/repos?sort=full_name"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "" should have 3 elements
+    And the JSON should be valid according to the schema "app/Resources/json-schema/payload/users/rezzza/repos.json"
+    And the JSON node "[0]->full_name" should be equal to "rezzza/command-bus"
+    And the JSON node "[1]->full_name" should be equal to "rezzza/command-bus-bundle"
+    And the JSON node "[2]->full_name" should be equal to "rezzza/JobflowBundle"
+</code></pre>
+
+<a href="https://github.com/gmorel/json-schema-afsy/blob/develop/test/functional/repo_list.json_schema.feature">
+    138 lignes.
+</a>
+
+<h2 id="rescousse">JSON Schema à la rescousse ?</h2>
+
+<pre><code class="language-gherkin">
+And the JSON should be valid according to the schema "app/Resources/json-schema/payload/v2/repo_list.json"
+</code></pre>
+
+<h3 id="presentation" >Présentation JSON Schema</h3>
+
+<p>
+    Un <a href="http://json-schema.org">JSON Schema</a> décrit le format d'un payload JSON.
+    Comparable aux <a href="https://en.wikipedia.org/wiki/Document_type_definition">DTD</a> ou aux <a href="https://en.wikipedia.org/wiki/XML_Schema_(W3C)">XSD</a> du XML.
+    Il permet de générer une documentation claire, lisible par un humain ET par une machine.
+    Très utile pour faire des tests automatisés ou pour valdider des données soumisent par un client.
+    Le format est officialisé et dispose d'une RFC: http://tools.ietf.org/html/draft-zyp-json-schema-04  (Draft 4 aujourd'hui - fin 2015)
+</p>
+
+<ul>
+    <li><a href="http://json-schema.org/schema">JSON Schema Core</a></li>
+    <li><a href="http://json-schema.org/latest/json-schema-validation.html">JSON Schema Validation</a></li>
+    <li><a href="http://json-schema.org/latest/json-schema-hypermedia.html">JSON Hyper-Schema</a></li>
+</ul>
+
+<h3 id="exemples">Exemples concrets</h3>
+
+<h4>Déterminer si la structure du payload est respectée</h4>
+
+<pre><code class="language-json">
+{
+  "name": "azerty"
+}
+</code></pre>
+
+<p>S'assurer que le noeud `name` soit un champs texte:</p>
+
+<pre><code class="language-json">
+    {
+    "definitions": {
+        "repo": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                }
+            }
+        }
+    }
+}
+
+</code></pre>
+
+
+<h4>Déterminer si le format de la valeur d'un noeud JSON reste respecté</h4>
+
+<pre><code class="language-json">
+    "created_at": "2012-09-04T18:53:00Z"
+</code></pre>
+
+<p>Le noeud doit toujours respecter le format Y-m-dTH:i:sZ (ISO 8601)</p>
+
+<pre><code class="language-json">
+"created_at": {
+        "$ref": "../../../definition/common.json#/definitions/date_y_m_d___h_i_s"
+    },
+</code></pre>
+
+avec comme définition
+
+<pre><code class="language-json">
+"date_y_m_d___h_i_s": {
+    "description": "Y-m-dTH:i:sZ (ISO 8601)",
+    "type": "string",
+    "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T(\\d{2}):(\\d{2}):(\\d{2})Z$"
+},
+</code></pre>
+
+<h4>Déterminer si la valeur du noeud JSON reste cohérente au niveau métier</h4>
+
+<pre><code class="language-json">
+    "open_issues_count": 37,
+</code></pre>
+
+<p>Le noeud ne doit jamais contenir de valeur négative</p>
+
+<pre><code class="language-json">
+"open_issues_count": {
+    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+},
+</code></pre>
+
+avec comme définition
+
+<pre><code class="language-json">
+"positive_integer": {
+    "description": "Positive integer",
+    "type": "integer",
+    "minimum": 0,
+    "exclusiveMinimum": false
+}
+</code></pre>
+
+<h2 id="symfony2">L'intégrer dans son projet Symfony 2</h2>
+
+<p>
+Plusieurs projets existent dont:
+<a href="https://github.com/rezzza/rest-api-behat-extension">rest-api-behat-extension<a/>: composer require "rezzza/rest-api-behat-extension:~1.3"
+
+qui s'utilise via ce step Behat
+</p>
+
+<pre><code class="language-gherkin">
+And the JSON should be valid according to the schema "app/Resources/json-schema/payload/v2/repo_list.json"
+</code></pre>
+
+<p><b>Et c'est tout</b></p>
+
+<p>
+Ou encore via lib <a href="https://github.com/Behatch/contexts">Behatch<a/>: composer require "behatch/contexts"
+</p>
+
+<h3 id="aide">Aide à l'écriture d'un JSON Schema</h3>
+
+<ul>
+    <li>Understanding JSON Schema: http://spacetelescope.github.io/</li>
+    <li>Générateur en ligne de JSON Schema: http://jsonschema.net/#/</li>
+    <li>Validateur en ligne de JSON Schema: http://www.jsonschemavalidator.net/</li>
+    <li>Online Json Escaper: http://www.freeformatter.com/javascript-escape.html#ad-output (Très util pour échapper les slash dans les Regex)</li>
+</ul>
+
+<h3 id="avantages">Avantages</h3>
+
+<ul>
+    <li>Facilite la lecture des Feature des API REST JSON</li>
+    <li>Assure les tests fonctionnels anti-regresions</li>
+    <li>Un seul JSON schema pour tester plusieurs Feature</li>
+    <li>Réutilisable, un JSON Schema peut être inclut dans un autre</li>
+    <li>Assure la cohérence des noeuds entre les différentes opérations de l'API si elles exposent les mêmes resources (sous noeud)</li>
+    <li>Peut aussi servir à valider les données reçues d'un client</li>
+</ul>
+
+<h3 id="inconvenients">Inconvénients</h3>
+
+<ul>
+    <li>Courbe de progression assez longue pour maitriser l'écriture des schémas</li>
+    <li>Difficile à débugger</li>
+    <li>Pas mal de subtilités (notemment http://spacetelescope.github.io/understanding-json-schema/reference/combining.html#allof)</li>
+    <li>Bien penser à tester la réciprocité. Juste pour valider que votre schéma est bien pris en compte. On peut rapidement avoir des surprises.</li>
+</ul>
+
+<h2 id="plus">En savoir plus</h2>
+
+<ul>
+    <li>http://crypt.codemancers.com/posts/2014-02-11-An-introduction-to-json-schema/</li>
+    <li>https://brandur.org/elegant-apis</li>
+    <li>http://fr.slideshare.net/aloyer/bdd-writing-better-scenario</li>
+</ul>
+
+{% endblock article_content %}
+
+{% block article_avatar %}
+    <img src="{{ asset('bundles/afsyfront/images/avent/guillaume.morel.jpg') }}" />
+{% endblock %}
+
+{% block article_bio %}
+<h2>
+    <a href="{% block author_url 'https://connect.sensiolabs.com/profile/gmorel' %}">{% block article_author 'Guillaume MOREL' %}</a>
+</h2>
+
+<p>
+    Il découvre symfony 1 et les bases de la qualité logicielle durant ses études.
+    Depuis il essaye de rester à la page afin de minimiser son impacte sur la dette technique de ses applications.
+    Aujourd'hui chez <a href="http://verylastroom.com">VeryLastRoom</a>,
+       il s'affère à refactor ou à rajouter des features sur les APIs REST de la start up en suivant les principes du Domain Driven Design.
+</p>
+{% endblock %}
