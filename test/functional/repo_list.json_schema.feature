@@ -1,4 +1,4 @@
-Feature: should be equal to Display sorted GitHub organization repository list
+Feature: Display sorted GitHub organization repository list
     As an non authenticated User
     In order to easily search for an organization project
     I should be able to sort an organization repository list
@@ -6,7 +6,7 @@ Feature: should be equal to Display sorted GitHub organization repository list
     Background:
         Given I'm not authenticated
 
-    Scenario: should be able to sort by full_name
+    Scenario: Should be able to sort by full_name
         When I send a GET request to "/users/rezzza/repos?sort=full_name"
         Then the response status code should be 200
         And the response should be in JSON
@@ -17,7 +17,7 @@ Feature: should be equal to Display sorted GitHub organization repository list
         And the JSON node "[2]->full_name" should be equal to "rezzza/JobflowBundle"
 
 
-    Scenario: should be able to sort by created
+    Scenario: Should be able to sort by created
         When I send a GET request to "/users/rezzza/repos?sort=created"
         Then the response status code should be 200
         And the response should be in JSON
@@ -28,7 +28,7 @@ Feature: should be equal to Display sorted GitHub organization repository list
         And the JSON node "[2]->full_name" should be equal to "rezzza/command-bus-bundle"
 
 
-    Scenario: should be able to sort by updated
+    Scenario: Should be able to sort by updated
         When I send a GET request to "/users/rezzza/repos?sort=updated"
         Then the response status code should be 200
         And the response should be in JSON
@@ -39,7 +39,7 @@ Feature: should be equal to Display sorted GitHub organization repository list
         And the JSON node "[2]->full_name" should be equal to "rezzza/command-bus"
 
 
-    Scenario: should be able to sort by full_name (default)
+    Scenario: Should be able to sort by full_name (default)
         When I send a GET request to "/users/rezzza/repos"
         Then the response status code should be 200
         And the response should be in JSON
