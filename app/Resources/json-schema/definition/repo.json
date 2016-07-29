@@ -1,0 +1,273 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "repo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "../../../definition/common.json#/definitions/identifier"
+                },
+                "name": {
+                    "$ref": "../../../definition/common.json#/definitions/string_not_empty"
+                },
+                "full_name": {
+                    "$ref": "../../../definition/common.json#/definitions/string_not_empty"
+                },
+                "owner": {
+                    "$ref": "../../../definition/owner.json#/definitions/owner"
+                },
+                "private": {
+                    "type": "boolean"
+                },
+                "html_url": {
+                    "$ref": "../../../definition/common.json#/definitions/url"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "fork": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "forks_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "keys_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "collaborators_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "teams_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "hooks_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "issue_events_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "events_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "assignees_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "branches_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "tags_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "blobs_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "git_tags_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "git_refs_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "trees_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "statuses_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "languages_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "stargazers_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "contributors_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "subscribers_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "subscription_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "commits_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "git_commits_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "comments_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "issue_comment_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "contents_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "compare_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "merges_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "archive_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "downloads_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "issues_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "pulls_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "milestones_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "notifications_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "labels_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "releases_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_repos"
+                },
+                "created_at": {
+                    "$ref": "../../../definition/common.json#/definitions/date_y_m_d___h_i_s"
+                },
+                "updated_at": {
+                    "$ref": "../../../definition/common.json#/definitions/date_y_m_d___h_i_s"
+                },
+                "pushed_at": {
+                    "$ref": "../../../definition/common.json#/definitions/date_y_m_d___h_i_s"
+                },
+                "git_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_git_url"
+                },
+                "ssh_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_ssh_url"
+                },
+                "clone_url": {
+                    "$ref": "../../../definition/common.json#/definitions/url"
+                },
+                "svn_url": {
+                    "$ref": "../../../definition/common.json#/definitions/url"
+                },
+                "size": {
+                    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+                },
+                "stargazers_count": {
+                    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+                },
+                "watchers_count": {
+                    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+                },
+                "language": {
+                    "$ref": "../../../definition/common.json#/definitions/string_not_empty"
+                },
+                "has_issues": {
+                    "type": "boolean"
+                },
+                "has_downloads": {
+                    "type": "boolean"
+                },
+                "has_wiki": {
+                    "type": "boolean"
+                },
+                "has_pages": {
+                    "type": "boolean"
+                },
+                "forks_count": {
+                    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+                },
+                "open_issues_count": {
+                    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+                },
+                "forks": {
+                    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+                },
+                "open_issues": {
+                    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+                },
+                "watchers": {
+                    "$ref": "../../../definition/common.json#/definitions/positive_integer"
+                },
+                "default_branch": {
+                    "$ref": "../../../definition/common.json#/definitions/string_not_empty"
+                }
+            },
+            "required": [
+                "id",
+                "name",
+                "full_name",
+                "owner",
+                "private",
+                "html_url",
+                "description",
+                "fork",
+                "url",
+                "forks_url",
+                "keys_url",
+                "collaborators_url",
+                "teams_url",
+                "hooks_url",
+                "issue_events_url",
+                "events_url",
+                "assignees_url",
+                "branches_url",
+                "tags_url",
+                "blobs_url",
+                "git_tags_url",
+                "git_refs_url",
+                "trees_url",
+                "statuses_url",
+                "languages_url",
+                "stargazers_url",
+                "contributors_url",
+                "subscribers_url",
+                "subscription_url",
+                "commits_url",
+                "git_commits_url",
+                "comments_url",
+                "issue_comment_url",
+                "contents_url",
+                "compare_url",
+                "merges_url",
+                "archive_url",
+                "downloads_url",
+                "issues_url",
+                "pulls_url",
+                "milestones_url",
+                "notifications_url",
+                "labels_url",
+                "releases_url",
+                "created_at",
+                "updated_at",
+                "pushed_at",
+                "git_url",
+                "ssh_url",
+                "clone_url",
+                "svn_url",
+                "size",
+                "stargazers_count",
+                "watchers_count",
+                "language",
+                "has_issues",
+                "has_downloads",
+                "has_wiki",
+                "has_pages",
+                "forks_count",
+                "open_issues_count",
+                "forks",
+                "open_issues",
+                "watchers",
+                "default_branch"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

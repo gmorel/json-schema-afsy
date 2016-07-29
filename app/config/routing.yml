@@ -1,0 +1,3 @@
+gmorel_github:
+    resource: "@GmorelGithubBundle/Resources/config/routing.yml"
+    prefix:   /

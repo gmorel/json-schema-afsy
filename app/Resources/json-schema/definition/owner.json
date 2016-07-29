@@ -1,0 +1,82 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "owner": {
+            "id": "http://jsonschema.net/owner",
+            "type": "object",
+            "required": [
+                "login",
+                "id",
+                "avatar_url",
+                "gravatar_id",
+                "url",
+                "html_url",
+                "followers_url",
+                "following_url",
+                "gists_url",
+                "starred_url",
+                "subscriptions_url",
+                "organizations_url",
+                "repos_url",
+                "events_url",
+                "received_events_url",
+                "type",
+                "site_admin"
+            ],
+            "properties": {
+                "login": {
+                    "$ref": "../../../definition/common.json#/definitions/string_not_empty"
+                },
+                "id": {
+                    "$ref": "../../../definition/common.json#/definitions/identifier"
+                },
+                "avatar_url": {
+                    "$ref": "../../../definition/common.json#/definitions/url"
+                },
+                "gravatar_id": {
+                    "type": "string"
+                },
+                "url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "html_url": {
+                    "$ref": "../../../definition/common.json#/definitions/url"
+                },
+                "followers_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "following_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "gists_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "starred_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "subscriptions_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "organizations_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "repos_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "events_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "received_events_url": {
+                    "$ref": "../../../definition/common.json#/definitions/github_internal_url_users"
+                },
+                "type": {
+                    "$ref": "../../../definition/common.json#/definitions/string_not_empty"
+                },
+                "site_admin": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}

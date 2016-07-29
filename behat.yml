@@ -1,0 +1,15 @@
+default:
+    suites:
+        repo_list:
+            paths:    [ %paths.base%/test/functional ]
+            contexts:
+                - Gmorel\Test\Functional\Context\FeatureContext
+                - Rezzza\RestApiBehatExtension\RestApiContext
+                - Rezzza\RestApiBehatExtension\Json\JsonContext
+    extensions:
+        Behat\Symfony2Extension: ~
+        Rezzza\RestApiBehatExtension\Extension:
+            rest:
+                base_url: http://localhost:8000
+                store_response: true
+                adaptor_name: curl
